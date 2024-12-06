@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Assistance</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://wallpaperaccess.com/full/821458.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .question-circle {
+            background-color: rgba(30, 144, 255, 0.8);
+            color: white;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            padding: 10px;
+        }
+
+        /* Poziții pentru cercuri */
+        
+#circle1 { top: 10%; left: 10%; } /* Stânga sus */
+#circle2 { top: 10%; left: 75%; } /* Dreapta sus */
+#circle3 { top: 50%; left: 20%; transform: translateY(-50%); } /* Stânga mijloc */
+#circle4 { top: 50%; left: 64%; transform: translateY(-50%); } /* Dreapta mijloc */
+#circle5 { top: 50%; left: 44%; }
+
+        button {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1E90FF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #4682b4;
+        }
+
+        .result {
+            display: none;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cercurile pentru întrebări -->
+        <div id="circle1" class="question-circle">
+            <label for="weight">Greutatea (kg):</label>
+            <input type="number" id="weight" placeholder="Introduceți greutatea" required>
+        </div>
+
+        <div id="circle2" class="question-circle">
+            <label for="height">Înălțimea (cm):</label>
+            <input type="number" id="height" placeholder="Introduceți înălțimea" required>
+        </div>
+
+        <div id="circle3" class="question-circle">
+            <label for="temperature">Temperatura (°C):</label>
+            <input type="number" id="temperature" placeholder="Introduceți temperatura" required>
+        </div>
+
+        <div id="circle4" class="question-circle">
+            <label>Fumezi?</label>
+            <div>
+                <input type="radio" id="smokeYes" name="smoke" value="Da"> Da
+                <input type="radio" id="smokeNo" name="smoke" value="Nu"> Nu
+            </div>
+        </div>
+
+        <div id="circle5" class="question-circle">
+            <label>Ce afecțiuni ai?</label>
+            <div class="checkbox-container">
+                <div><input type="checkbox" id="condition1"> Diabet</div>
+                <div><input type="checkbox" id="condition2"> Hipertensiune</div>
+                <div><input type="checkbox" id="condition3"> Astm</div>
+                <div><input type="checkbox" id="condition4"> Hepatita</div>
+                <div><input type="checkbox" id="condition5"> Boala Cronica de Rinichi</div>
+                <div><input type="checkbox" id="condition6"> Niciuna</div>
+            </div>
+        </div>
+
+        <button onclick="analyzeData()">Analizează</button>
+
+        <!-- Div-ul pentru rezultate -->
+        <div id="result" class="result">
+            <h2>Rezultate</h2>
+            <p id="bmiResult"></p>
+            <p id="analysisResult"></p>
+            <p id="temperatureAdvice"></p>
+        </div>
+    </div>
+
+    <script>
+        function analyzeData() {
+            // Colectăm datele utilizatorului
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value) / 100; 
+            const temperature = parseFloat(document.getElementById('temperature').value);
+            const smoke = document.querySelector('input[name="smoke"]:checked') ? document.querySelector('input[name="smoke"]:checked').value : 'Nu';
+
+            // Bolile selectate
+            const conditions = [];
+            if (document.getElementById('condition1').checked) conditions.push('Diabet');
+            if (document.getElementById('condition2').checked) conditions.push('Hipertensiune');
+            if (document.getElementById('condition3').checked) conditions.push('Astm');
+            if (document.getElementById('condition4').checked) conditions.push('Hepatita');
+            if (document.getElementById('condition5').checked) conditions.push('Boala Cronica de Rinichi');
+            if (document.getElementById('condition6').checked) conditions.push('Niciuna');
+
+            // Calculăm BMI-ul
+            const bmi = weight / (height * height);
+            let bmiCategory = '';
+            let bmiAdvice = '';
+            if (bmi < 18.5) {
+            bmiCategory = 'Subponderal';
+            bmiAdvice = 'Ești sub greutatea normală. Este recomandat să consulți un nutriționist și să incluzi alimente bogate în calorii sănătoase în dieta ta.';
+        } else if (bmi >= 18.5 && bmi < 24.9) {
+            bmiCategory = 'Normal';
+            bmiAdvice = 'Greutatea ta este în limite normale. Continuă să menții un stil de viață echilibrat și activ.';
+        } else if (bmi >= 25 && bmi < 29.9) {
+            bmiCategory = 'Supraponderal';
+            bmiAdvice = 'Ești peste greutatea normală. Este recomandat să faci mai multă mișcare și să reduci alimentele bogate în calorii.';
+        } else {
+            bmiCategory = 'Obez';
+            bmiAdvice = 'Ești în categoria obezitate. Este important să consulți un medic sau nutriționist pentru a-ți planifica un regim alimentar și un program de exerciții.';
+        }
+
+            // Afișăm rezultatul BMI
+            document.getElementById('bmiResult').innerHTML = `
+            BMI: ${bmi.toFixed(2)} - Categoria: <strong>${bmiCategory}</strong><br>
+            <em>${bmiAdvice}</em>
+        `;
+
+            // Recomandăm analize
+            let analysisList = `<h3>Analize recomandate:</h3><ul>`;
+            analysisList += `<li>Hemoleucograma - 80 RON</li>`;
+            analysisList += `<li>Test de glicemie - 50 RON</li>`;
+
+            if (conditions.includes('Diabet')) {
+            analysisList += `<li>Test HbA1c - 50 RON</li>`;
+            analysisList += `<li>Glicemie - 30 RON</li>`;
+            
+        }
+        if (conditions.includes('Hipertensiune')) {
+            analysisList += `<li>Monitorizare tensiune arterială - 60 RON</li>`;
+            analysisList += `<li>Colesterol total 12 RON</li>`;
+            analysisList += `<li>Colesterol HDL 12 RON</li>`;
+            analysisList += `<li>Colesterol LDL 12 RON</li>`;
+            analysisList += `<li>Trigliceride 20 RON</li>`;
+            analysisList += `<li>ECG 100 RON</li>`;
+
+        }
+        if (conditions.includes('Astm')) {
+            analysisList += `<li>Test funcție pulmonară - 100 RON</li>`;
+            analysisList += `<li>Spirometrie - 90 RON</li>`;
+            analysisList += `<li>Teste Prick Cutanate - 120 RON</li>`;
+        }
+        if (conditions.includes('Hepatita')) {
+        analysisList += `<li>Antigen HBs - 40 RON</li>`;
+        analysisList += `<li>Ecografie Abdominală - 200 RON</li>`;
+        analysisList += `<li>Bilirubina - 12 RON</li>`;
+        analysisList += `<li>Transaminaze - 12 RON</li>`;
+        }
+        if (conditions.includes('Boala Cronica de Rinichi')) { // Boala cronica de Rinichi
+        analysisList += `<li>Rata de Filtrare Glomerulară (RFG) - 12 RON</li>`;
+        analysisList += `<li>Raport Albumină/Creatinină Urinară - 45 RON</li>`;
+        analysisList += `<li>Examen sumar urină - 29 RON</li>`;
+    }
+
+       
+        if (smoke === 'Da') {
+            analysisList += `<li>Test pentru sănătatea pulmonară - 100 RON</li>`;
+            analysisList += `<li>Plasturi cu Nicotina</li>`;
+        }
+            analysisList += `</ul>`;
+            document.getElementById('analysisResult').innerHTML = analysisList;
+            let temperatureAdvice = '';
+    if (temperature > 38) {
+        temperatureAdvice = 'Temperatură mare! Te sfătuim să consulți un medic.';
+    } else if (temperature > 37.5) {
+        temperatureAdvice = 'Ai febră moderată! Este recomandat să te odihnești și să bei lichide.';
+    } else {
+        temperatureAdvice = 'Temperatura ta este normală.';
+    }
+    document.getElementById('temperatureAdvice').innerText = temperatureAdvice;
+
+            // Ascundem cercurile și afișăm rezultatele
+            document.querySelectorAll('.question-circle').forEach(circle => {
+                circle.style.display = 'none';
+            });
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
+
